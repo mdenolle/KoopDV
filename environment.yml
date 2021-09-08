@@ -1,0 +1,17 @@
+name: koopdv
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - scipy
+  - pytorch
+  - torchvision
+  - numpy
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - jupyter
+  - jupyterlab
+  - ipython
+  - d2l
