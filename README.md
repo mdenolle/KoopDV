@@ -17,6 +17,7 @@ Several factors contribute to altering seismic velocities/strains: changes in ai
 # Installation
 Dependencies are Mallen et al, 2021 Deep Koopman Forecast module.
 Create a conda environment:
+
 ``conda env create -f environment.yml``
 
 ``conda activate koopdv``
