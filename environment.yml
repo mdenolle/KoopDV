@@ -14,4 +14,4 @@ dependencies:
   - jupyter
   - jupyterlab
   - ipython
-  - d2l
+  - dpk-forecast
