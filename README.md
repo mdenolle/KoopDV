@@ -33,9 +33,9 @@ get_gps.ipnyb is the script to download the GPS time series and put them into a 
 
 # Initial goals
 
-* improve temporal forecast, hindcast, gap filling using DPK or LSTMs/GRUs at individual sites
-* Include geospatial information by joining stations, and adding lat-long information of the seismometers. There is some spatial correlation in southern california. Otherdata from colleague could be even smoother (deeper)
-* Include temperature, precipitation, to improve temporal forecast/hindcast/gap filling (additional data set that should help the fit)
-* Include GPS time series (or their derivative strains) in the mix to improve the geospatial prediction
+1 - Include geospatial information by joining stations, and adding lat-long information of the seismometers. There is some spatial correlation in southern california. Otherdata from colleague could be even smoother (deeper)
+2 - Improve temporal forecast, hindcast, gap filling using DPK or LSTMs/GRUs at individual sites
+3 - Include temperature, precipitation, to improve temporal forecast/hindcast/gap filling (additional data set that should help the fit)
+4 - Include GPS time series (or their derivative strains) in the mix to improve the geospatial prediction
 
 
