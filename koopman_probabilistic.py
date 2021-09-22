@@ -166,7 +166,7 @@ class KoopmanProb(nn.Module):
             wt = t_batch * omega[None]
             wt[:, which] = 0
             wt = wt[:, None] + pi_block[None]
-            k = torch.cat([torch.cos(wt), torch.sin(wt)], -1)  # TODO THIS MIGHT BE WRONG BECAUSE OF INDEXING # [cos_mu_w1, cos_mu_w2, cos_sigma_w1, cos_sigma_w2, cos_alpha_w1, cos_alpha_w2, sin...]
+            k = torch.cat([torch.cos(wt), torch.sin(wt)], -1)  # TODOTHIS MIGHT BE WRONG BECAUSE OF INDEXING # [cos_mu_w1, cos_mu_w2, cos_sigma_w1, cos_sigma_w2, cos_alpha_w1, cos_alpha_w2, sin...]
             loss = self.model_obj(k, xt[i * batch:(i + 1) * batch, None], None).cpu().detach().numpy()
             errors.append(loss)
 
@@ -337,8 +337,8 @@ class KoopmanProb(nn.Module):
 
         return np.mean(losses)
 
-    def fit(self, xt, tt=None, covariates=None, iterations=20, interval=10, cutoff=50, weight_decay=1e-3, verbose=False, lr_theta=1e-4,
-            lr_omega=1e-5, training_mask=None):
+    def fit(self, xt, tt=None, covariates=None, iterations=20, interval=10, cutoff=50, weight_decay=1e-3, verbose=False,
+            lr_theta=1e-4, lr_omega=1e-5, training_mask=None):
         '''
         Given a dataset, this function alternatingly optimizes omega and
         parameters of f. Specifically, the algorithm performs interval many
@@ -352,7 +352,8 @@ class KoopmanProb(nn.Module):
             the times of measurement of xt. Default None, which assumes tt is uniform
         covariates : TYPE np.array of shape (xt.shape[0], num_covariates)
             covariates that should be passed into the neural network along with the
-            sines and cosines
+            sines and cosines. Covariates are normalized before passing into NN, and
+            the normalization is remembered for when `predict` is called
         iterations : TYPE int, optional
             Total number of SGD epochs
         interval : TYPE, optional
@@ -377,7 +378,7 @@ class KoopmanProb(nn.Module):
         if training_mask is not None:
             training_mask = torch.Tensor(training_mask)
         if (covariates is None and self.model_obj.num_covariates != 0) or covariates.shape[1] != self.model_obj.num_covariates:
-            raise ValueError(f"model object requires {self.model_obj.num_covariates} covariates but {covariates.shape[1]} were provided")
+            raise ValueError(f"model object requires {self.model_obj.num_covariates} covariates but {covariates.shape[1] if covariates is not None else 0} were provided")
         if self.model_obj.num_covariates != 0:
             if covariates is not None:
                 covariates = torch.Tensor(covariates)
@@ -433,11 +434,11 @@ class KoopmanProb(nn.Module):
         '''
         if (covariates is None and self.model_obj.num_covariates != 0) or covariates.shape[1] != self.model_obj.num_covariates:
             raise ValueError(
-                f"model object requires {self.model_obj.num_covariates} covariates but {covariates.shape[1]} were provided")
+                f"model object requires {self.model_obj.num_covariates} covariates but {covariates.shape[1] if covariates is not None else 0} were provided")
 
         t = torch.arange(T, device=self.device) + 1 if isinstance(T, int) else torch.tensor(T, device=self.device)
         ts_ = torch.unsqueeze(t, -1).type(torch.get_default_dtype())
-        covars = torch.zeros((T,0)) if covariates is None else (covariates - self.covariates_mean) / self.covariates_std
+        covars = torch.zeros((T,0)) if covariates is None else (torch.Tensor(covariates) - self.covariates_mean) / self.covariates_std
         o = torch.unsqueeze(self.omegas, 0)
 
         k = torch.cat([torch.cos(ts_ * o), torch.sin(ts_ * o), covars], -1)
